@@ -2,6 +2,8 @@
 name = "fake-airplay"
 version = "0.1.0"
 edition = "2021"
+description = "A library to create a fake AirPlay service."
+license = "MIT"
 
 [dependencies]
 gethostname = "0.4.1"
