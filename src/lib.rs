@@ -5,6 +5,7 @@ use std::{
 };
 
 use rand::Rng;
+use tokio::sync::mpsc::{Sender, error::TryRecvError};
 use zeroconf::{
     prelude::TEventLoop, service::TMdnsService, txt_record::TTxtRecord, MdnsService, ServiceType,
     TxtRecord,
@@ -36,9 +37,26 @@ impl From<&str> for DeviceType {
         }
     }
 }
+pub struct Service {
+    handle: JoinHandle<()>,
+    tx: Sender<()>,
+}
+impl Service {
+    pub fn new(handle: JoinHandle<()>, tx: Sender<()>) -> Self {
+        Self {
+            handle,
+            tx
+        }
+    }
+    pub fn kill(self) {
+        self.tx.blocking_send(()).unwrap();
+        self.handle.join().unwrap();
+    }
+}
 /// Creates the service thread and returns the handle.
-pub fn create_service(name: String, device_type: DeviceType) -> JoinHandle<()> {
-    std::thread::spawn(move || {
+pub fn create_service(name: String, device_type: DeviceType) -> Service {
+    let (tx, mut rx) = tokio::sync::mpsc::channel::<()>(1);
+    let handle = std::thread::spawn(move || {
         let mut service = MdnsService::new(
             ServiceType::new("airplay", "tcp").unwrap(),
             rand::thread_rng().gen_range(0..u16::MAX),
@@ -59,9 +77,10 @@ pub fn create_service(name: String, device_type: DeviceType) -> JoinHandle<()> {
 
         let ev_loop = service.register().unwrap();
 
-        loop {
+        while let Err(TryRecvError::Empty) = rx.try_recv() {
             ev_loop.poll(Duration::from_millis(0)).unwrap();
             thread::sleep(Duration::from_millis(500));
         }
-    })
+    });
+    Service::new(handle, tx)
 }
