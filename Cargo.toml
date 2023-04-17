@@ -8,7 +8,9 @@ repository = "https://github.com/Frostie314159/fake-airplay"
 
 [dependencies]
 ctrlc = "3.2.5"
+env_logger = "0.10.0"
 gethostname = "0.4.1"
+log = "0.4.17"
 rand = "0.8.5"
 tokio = { version = "1.27.0", features = ["full"] }
 zeroconf = "0.10.5"

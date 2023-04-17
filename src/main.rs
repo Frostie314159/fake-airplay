@@ -1,8 +1,13 @@
-use std::{sync::{Arc, atomic::AtomicBool}, thread, time::Duration};
+use std::{
+    sync::{atomic::AtomicBool, Arc},
+    thread,
+    time::Duration,
+};
 
 use fake_airplay::{create_service, DeviceType};
 
 fn main() {
+    env_logger::init();
     let service = create_service(
         std::env::args()
             .nth(1)
@@ -15,10 +20,13 @@ fn main() {
     let should_close = Arc::new(AtomicBool::new(false));
     {
         let should_close_clone = should_close.clone();
-        ctrlc::set_handler(move|| should_close_clone.store(true, std::sync::atomic::Ordering::Relaxed)).unwrap();
+        ctrlc::set_handler(move || {
+            should_close_clone.store(true, std::sync::atomic::Ordering::Relaxed)
+        })
+        .unwrap();
     }
-    while !should_close.load(std::sync::atomic::Ordering::Acquire) {
+    while !should_close.load(std::sync::atomic::Ordering::Acquire) && !service.is_finished() {
         thread::sleep(Duration::from_millis(500));
-    }    
+    }
     service.kill();
 }
