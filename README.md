@@ -1,7 +1,7 @@
 # Fake-AirPlay
 This crate creates a fake AirPlay service, which will be discoverable by apple devices on the network.
 ## Usage
-> ❗ To use fake-airplay make shure you have the **avahi daemon** running ❗
+> ❗ To use fake-airplay make sure you have the **avahi daemon** running ❗
 
 To start the **avahi daemon** install the `nss-mdns` package and run:
 ```sh
