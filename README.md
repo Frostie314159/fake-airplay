@@ -38,7 +38,7 @@ and run:
 ```sh
 systemctl start avahi-daemon.service
 ```
-After starting the avahi daemon, you can run fake-airplay by installing the shairport-sync package with the following command:
+After starting the avahi daemon, you can install fake-airplay by running:
 
 ```sh
 cargo install fake-airplay
