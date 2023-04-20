@@ -30,7 +30,7 @@ fake-airplay -a <NAME> -d <DEVICE_TYPE>
 Replace `<NAME>` with the name you want the fake device to show and replace `<DEVICE_TYPE>` with the devicetype you want to show.
 
 ### Arch
-To start the **avahi daemon** install the `nss-mdns` using 
+To start the avahi daemon install the `nss-mdns` using 
 ```sh
 sudo pacman -S nns-mdns
 ```
